@@ -13,6 +13,7 @@ DESCRIPTION:  This program implements a simplified web browser history manager u
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 struct StackNode {
 	char url[50];
@@ -24,10 +25,15 @@ struct Stack {
 };
 
 
+// Function prototypes
+void push(struct Stack* stack, char* newUrl);
+struct Stack* InitializeStack(void);
 
 int main(void) {
 
 	bool exit = false;
+
+	struct Stack* stacklist = InitializeStack();
 
 	printf("Web Browser History Manager\n");
 	printf("\n");
@@ -46,9 +52,27 @@ int main(void) {
 		scanf("%d", &choice);
 
 		switch (choice) {
+
+		//Allowing the user to add a new url to the top of the stack
 		case 1:
 			printf("You chose to visit a new web page.\n");
 			printf("\n");
+
+			// Creating buffer to receive input
+			char buffer[50];
+
+			// Asking the user for the url
+			printf("Enter webpage url: ");
+			scanf("%49s", buffer);
+
+			// Stop getting input if the user enters an invalid url
+			if (strcmp(buffer, "") == 0) {
+				printf("Please enter a valid url.\n");
+				break;
+			}
+			else {
+				push(stacklist, buffer);
+			}
 			break;
 
 		case 2:
@@ -86,3 +110,51 @@ int main(void) {
 	}
 	return 0;
 }
+
+// METHOD : push()
+// DESCRIPTION: 
+//      This function adds a new node to the stack.
+// PARAMETERS:
+//     struct Stack* stack: the stack being added to
+//	   char* newUrl: the url being added to the stack
+// RETURNS:
+//	   None.
+void push(struct Stack* stack, char* newUrl) {
+
+	// Creating a new node for the new url
+	struct StackNode* newUrlNode = malloc(sizeof(struct StackNode));
+
+	if (newUrlNode == NULL)
+	{
+		printf("Could not allocate memory.\n");
+		return;
+	}
+
+	// Adding the url to the new node
+	strcpy(newUrlNode->url, newUrl);
+
+	//linking the previous node
+	newUrlNode->next = stack->top;
+
+	// Adding the new node to the top of the stack
+	stack->top = newUrlNode;
+}
+
+
+// METHOD : InitializeStack()
+// DESCRIPTION: 
+//      This function allocates memory to initialize a stack.
+// PARAMETERS:
+//      None.
+// RETURNS:
+//		struct Stack* stack : A stack struct.
+struct Stack* InitializeStack(void) {
+	struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+
+	if (stack == NULL) {
+		printf("Could not allocate memory.");
+	}
+	stack->top = NULL;
+	return stack;
+}
+
