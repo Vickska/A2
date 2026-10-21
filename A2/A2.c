@@ -30,6 +30,8 @@ void push(struct Stack* stack, char* newUrl);
 struct Stack* InitializeStack(void);
 bool isEmpty(struct Stack* stack);
 char* pop(struct Stack* stack);
+char* peek(struct Stack* stack);
+
 
 
 int main(void) {
@@ -150,7 +152,7 @@ void push(struct Stack* stack, char* newUrl) {
 
 // METHOD : pop()
 // DESCRIPTION: 
-//      This function removes a new node from the top of the stack and returns its url.
+//      This function removes a node from the top of the stack and returns its url.
 // PARAMETERS:
 //     struct Stack* stack: the stack being removed from
 //	   char* newUrl: the url being removed from the stack
@@ -181,6 +183,33 @@ char* pop(struct Stack* stack) {
 
 	
 }
+
+// METHOD : peek()
+// DESCRIPTION: 
+//      This function returns a node from the top of the stack.
+// PARAMETERS:
+//     struct Stack* stack: the stack being peeked at
+//	   char* newUrl: the url being from the top of the stack
+// RETURNS:
+//	   char* topUrl: the url of the top node.
+char* peek(struct Stack* stack) {
+
+	//Checking if the stack is empty
+	if (isEmpty(stack) == true) {
+		printf("Stack is empty.");
+		return NULL;
+	}
+
+
+	//Storing the url of the top node
+	static char topUrl[50];
+	strcpy(topUrl, stack->top->url);
+
+	return topUrl;
+
+
+}
+
 
 
 // METHOD : InitializeStack()
