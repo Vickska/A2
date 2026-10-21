@@ -28,12 +28,16 @@ struct Stack {
 // Function prototypes
 void push(struct Stack* stack, char* newUrl);
 struct Stack* InitializeStack(void);
+bool isEmpty(struct Stack* stack);
+char* pop(struct Stack* stack);
+
 
 int main(void) {
 
 	bool exit = false;
 
-	struct Stack* stacklist = InitializeStack();
+	struct Stack* backStack = InitializeStack();
+	struct Stack* forwardStack = InitializeStack();
 
 	printf("Web Browser History Manager\n");
 	printf("\n");
@@ -71,13 +75,17 @@ int main(void) {
 				break;
 			}
 			else {
-				push(stacklist, buffer);
+				push(backStack, buffer);
 			}
 			break;
 
 		case 2:
 			printf("You chose to navigate backward.\n");
 			printf("\n");
+
+			char* topUrl = pop(backStack);
+			push(forwardStack, topUrl);
+
 			break;
 
 		case 3:
@@ -140,6 +148,40 @@ void push(struct Stack* stack, char* newUrl) {
 	stack->top = newUrlNode;
 }
 
+// METHOD : pop()
+// DESCRIPTION: 
+//      This function removes a new node from the top of the stack and returns its url.
+// PARAMETERS:
+//     struct Stack* stack: the stack being removed from
+//	   char* newUrl: the url being removed from the stack
+// RETURNS:
+//	   char* topUrl: the url of the node being popped.
+char* pop(struct Stack* stack) {
+
+	//Checking if the stack is empty
+	if (isEmpty(stack) == true) {
+		printf("Stack is empty.");
+		return NULL;
+	}
+
+	// temporarily storing the top node
+	struct StackNode* poppedNode = stack->top;
+
+	//Storing the url of the node being popped
+	static char topUrl[50];
+	strcpy(topUrl, poppedNode->url);
+
+	//Making the next node the top of the stack.
+	stack->top = poppedNode->next;
+
+	//Freeing the node being popped
+	free(poppedNode);
+
+	return topUrl;
+
+	
+}
+
 
 // METHOD : InitializeStack()
 // DESCRIPTION: 
@@ -157,4 +199,19 @@ struct Stack* InitializeStack(void) {
 	stack->top = NULL;
 	return stack;
 }
+
+// METHOD : isEmpty()
+// DESCRIPTION: 
+//      This function checks if the stack is empty
+// PARAMETERS:
+//      bool isEmpty: a boolean variable that checks if the stack is empty or not.
+// RETURNS:
+//		struct Stack* stack : A stack struct.
+bool isEmpty(struct Stack* stack) {
+
+	// Checking if the top of the stack is empty
+	bool isEmpty = stack->top == NULL;
+	return isEmpty;
+}
+
 
