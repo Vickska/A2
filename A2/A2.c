@@ -24,6 +24,16 @@ struct Stack {
 	struct StackNode* top;
 };
 
+struct QueueNode {
+	char url[50];
+	struct QueueNode* next;
+};
+
+struct Queue {
+	struct QueueNode* front;
+	struct QueueNode* rear;
+
+};
 
 // Function prototypes
 void push(struct Stack* stack, char* newUrl);
