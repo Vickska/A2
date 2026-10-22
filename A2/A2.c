@@ -37,13 +37,14 @@ struct Queue {
 
 // Function prototypes
 void push(struct Stack* stack, char* newUrl);
+char* pop(struct Stack* stack);
+char* peekS(struct Stack* stack);
 struct Stack* InitializeStack(void);
 bool isEmptyS(struct Stack* stack);
-char* pop(struct Stack* stack);
-char* peek(struct Stack* stack);
 
 void enqueue(struct Queue* queue, char* newUrl);
 char* dequeue(struct Queue* queue);
+char* peekQ(struct Queue* queue);
 bool isEmptyQ(struct Queue* queue);
 struct Queue* InitializeQueue(void);
 
@@ -113,9 +114,6 @@ int main(void) {
 			char* topUrl = pop(backStack);
 			push(forwardStack, topUrl);
 
-			char* frontUrl = dequeue(queue);
-			printf("%s\n", frontUrl);
-
 			break;
 
 		case 3:
@@ -127,22 +125,15 @@ int main(void) {
 			printf("You chose to display current page.\n");
 			printf("\n");
 
-			char* currentPage = peek(backStack);
+			char* currentPage = peekS(backStack);
 			printf("Your current page: %s\n", currentPage);
+
 			printf("\n");
 
 			break;
 
 		case 5:
 			printf("You chose to view the browsing history log.\n");
-			printf("\n");
-
-			struct QueueNode* tempq = queue->front;
-
-			while (tempq != NULL) {
-				printf("%s\n", tempq->url);
-				tempq = tempq->next;
-			}
 			printf("\n");
 
 			break;
@@ -200,7 +191,6 @@ void push(struct Stack* stack, char* newUrl) {
 //      This function removes a node from the top of the stack and returns its url.
 // PARAMETERS:
 //     struct Stack* stack: the stack being removed from
-//	   char* newUrl: the url being removed from the stack
 // RETURNS:
 //	   char* topUrl: the url of the node being popped.
 char* pop(struct Stack* stack) {
@@ -229,15 +219,14 @@ char* pop(struct Stack* stack) {
 	
 }
 
-// METHOD : peek()
+// METHOD : peekS()
 // DESCRIPTION: 
 //      This function returns a node from the top of the stack.
 // PARAMETERS:
 //     struct Stack* stack: the stack being peeked at
-//	   char* newUrl: the url being from the top of the stack
 // RETURNS:
 //	   char* topUrl: the url of the top node.
-char* peek(struct Stack* stack) {
+char* peekS(struct Stack* stack) {
 
 	//Checking if the stack is empty
 	if (isEmptyS(stack) == true) {
@@ -327,7 +316,6 @@ void enqueue(struct Queue* queue, char* newUrl) {
 //      This function removes a node from the queue.
 // PARAMETERS:
 //     struct Queue* queue: the queue being removed from
-//	   char* newUrl: the url of the node being removed from the queue
 // RETURNS:
 //	   char* frontUrl: the url of the node being dequeued.
 char* dequeue(struct Queue* queue) {
@@ -357,6 +345,31 @@ char* dequeue(struct Queue* queue) {
 	free(dequeuedNode);
 
 	return frontUrl;
+}
+
+// METHOD : peekQ()
+// DESCRIPTION: 
+//      This function returns a node from the front of the queue.
+// PARAMETERS:
+//     struct Queue* queue: the queue being peeked at
+// RETURNS:
+//	   char* frontUrl: the url of the front node.
+char* peekQ(struct Queue* queue) {
+
+	//Checking if the queue is empty
+	if (isEmptyQ(queue) == true) {
+		printf("Queue is empty.");
+		return NULL;
+	}
+
+
+	//Storing the url of the front node
+	static char frontUrl[50];
+	strcpy(frontUrl, queue->front->url);
+
+	return frontUrl;
+
+
 }
 // METHOD : InitializeQueue()
 // DESCRIPTION: 
