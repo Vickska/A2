@@ -38,9 +38,15 @@ struct Queue {
 // Function prototypes
 void push(struct Stack* stack, char* newUrl);
 struct Stack* InitializeStack(void);
-bool isEmpty(struct Stack* stack);
+bool isEmptyS(struct Stack* stack);
 char* pop(struct Stack* stack);
 char* peek(struct Stack* stack);
+
+void enqueue(struct Queue* queue, char* newUrl);
+bool isEmptyQ(struct Queue* queue);
+struct Queue* InitializeQueue(void);
+
+
 
 
 
@@ -50,6 +56,7 @@ int main(void) {
 
 	struct Stack* backStack = InitializeStack();
 	struct Stack* forwardStack = InitializeStack();
+	struct Queue* queue = InitializeQueue();
 
 	printf("Web Browser History Manager\n");
 	printf("\n");
@@ -87,8 +94,13 @@ int main(void) {
 				break;
 			}
 			else {
+				//pushing the url to the top of the stack
 				push(backStack, buffer);
+
+				//enquing the url to the queue
+				enqueue(queue, buffer);
 			}
+
 			break;
 
 		case 2:
@@ -171,7 +183,7 @@ void push(struct Stack* stack, char* newUrl) {
 char* pop(struct Stack* stack) {
 
 	//Checking if the stack is empty
-	if (isEmpty(stack) == true) {
+	if (isEmptyS(stack) == true) {
 		printf("Stack is empty.");
 		return NULL;
 	}
@@ -205,7 +217,7 @@ char* pop(struct Stack* stack) {
 char* peek(struct Stack* stack) {
 
 	//Checking if the stack is empty
-	if (isEmpty(stack) == true) {
+	if (isEmptyS(stack) == true) {
 		printf("Stack is empty.");
 		return NULL;
 	}
@@ -239,14 +251,14 @@ struct Stack* InitializeStack(void) {
 	return stack;
 }
 
-// METHOD : isEmpty()
+// METHOD : isEmptyS()
 // DESCRIPTION: 
 //      This function checks if the stack is empty
 // PARAMETERS:
-//      bool isEmpty: a boolean variable that checks if the stack is empty or not.
+//	    struct Stack* stack : A stack struct.
 // RETURNS:
-//		struct Stack* stack : A stack struct.
-bool isEmpty(struct Stack* stack) {
+//      bool isEmpty: a boolean variable that checks if the stack is empty or not.
+bool isEmptyS(struct Stack* stack) {
 
 	// Checking if the top of the stack is empty
 	bool isEmpty = stack->top == NULL;
@@ -254,3 +266,68 @@ bool isEmpty(struct Stack* stack) {
 }
 
 
+// METHOD : enqueue()
+// DESCRIPTION: 
+//      This function adds a new node to the queue.
+// PARAMETERS:
+//     struct Queue* queue: the queue being added to
+//	   char* newUrl: the url being added to the queue
+// RETURNS:
+//	   None.
+void enqueue(struct Queue* queue, char* newUrl) {
+
+	// Creating a new node for the new url
+	struct QueueNode* newUrlNode = malloc(sizeof(struct QueueNode));
+
+	if (newUrlNode == NULL)
+	{
+		printf("Could not allocate memory.\n");
+		return;
+	}
+
+	// Adding the url to the new node
+	strcpy(newUrlNode->url, newUrl);
+
+	//Setting new node as the first and last node if the queue is empty
+	if (isEmptyQ(queue) == true) {
+		queue->front = newUrlNode;
+		queue->rear = newUrlNode;
+		return;
+	}
+	//Placing new node at the back if the queue is not empty
+	queue->rear->next = newUrlNode;
+	queue->rear = newUrlNode;
+}
+
+// METHOD : InitializeQueue()
+// DESCRIPTION: 
+//      This function allocates memory to initialize a queue.
+// PARAMETERS:
+//      None.
+// RETURNS:
+//		struct Queue* queue : A queue struct.
+struct Queue* InitializeQueue(void) {
+	struct Queue* queue = (struct Queue*)malloc(sizeof(struct Queue));
+
+	if (queue == NULL) {
+		printf("Could not allocate memory.");
+	}
+	queue->front = NULL;
+	queue->rear = NULL;
+
+	return queue;
+}
+
+// METHOD : isEmptyQ()
+// DESCRIPTION: 
+//      This function checks if the queue is empty
+// PARAMETERS:
+//		struct Queue* queue : A queue struct.
+// RETURNS:
+//      bool isEmpty: a boolean variable that checks if the queue is empty or not.
+bool isEmptyQ(struct Queue* queue) {
+
+	// Checking if the top of the stack is empty
+	bool isEmpty = queue->front == NULL;
+	return isEmpty;
+}
