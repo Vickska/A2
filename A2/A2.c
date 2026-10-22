@@ -43,6 +43,7 @@ char* pop(struct Stack* stack);
 char* peek(struct Stack* stack);
 
 void enqueue(struct Queue* queue, char* newUrl);
+char* dequeue(struct Queue* queue);
 bool isEmptyQ(struct Queue* queue);
 struct Queue* InitializeQueue(void);
 
@@ -112,6 +113,9 @@ int main(void) {
 			char* topUrl = pop(backStack);
 			push(forwardStack, topUrl);
 
+			char* frontUrl = dequeue(queue);
+			printf("%s\n", frontUrl);
+
 			break;
 
 		case 3:
@@ -131,6 +135,14 @@ int main(void) {
 
 		case 5:
 			printf("You chose to view the browsing history log.\n");
+			printf("\n");
+
+			struct QueueNode* tempq = queue->front;
+
+			while (tempq != NULL) {
+				printf("%s\n", tempq->url);
+				tempq = tempq->next;
+			}
 			printf("\n");
 
 			break;
@@ -310,6 +322,42 @@ void enqueue(struct Queue* queue, char* newUrl) {
 	queue->rear = newUrlNode;
 }
 
+// METHOD : dequeue()
+// DESCRIPTION: 
+//      This function removes a node from the queue.
+// PARAMETERS:
+//     struct Queue* queue: the queue being removed from
+//	   char* newUrl: the url of the node being removed from the queue
+// RETURNS:
+//	   char* frontUrl: the url of the node being dequeued.
+char* dequeue(struct Queue* queue) {
+
+	//Checking if the queue is empty
+	if (isEmptyQ(queue) == true) {
+		printf("Queue is empty.");
+		return NULL;
+	}
+
+	// temporarily storing the front node
+	struct QueueNode* dequeuedNode = queue->front;
+
+	//Storing the url of the node being popped
+	static char frontUrl[50];
+	strcpy(frontUrl, dequeuedNode->url);
+
+	//Making the next node the top of the stack.
+	queue->front = dequeuedNode->next;
+
+	//If the next node is empty, set the rear to null
+	if (queue->front == NULL) {
+		queue->rear = NULL;
+	}
+
+	//Freeing the node being popped
+	free(dequeuedNode);
+
+	return frontUrl;
+}
 // METHOD : InitializeQueue()
 // DESCRIPTION: 
 //      This function allocates memory to initialize a queue.
