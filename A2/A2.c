@@ -111,8 +111,12 @@ int main(void) {
 			printf("You chose to navigate backward.\n");
 			printf("\n");
 
+			// popping the current url and pushing it to the forward stack
 			char* topUrl = pop(backStack);
 			push(forwardStack, topUrl);
+
+			// moving the current url to the rear of the queue
+			enqueue(queue,peekS(backStack));
 
 			break;
 
@@ -136,6 +140,13 @@ int main(void) {
 			printf("You chose to view the browsing history log.\n");
 			printf("\n");
 
+			struct QueueNode* tempq = queue->front;
+
+			while (tempq != NULL) {
+				printf("%s\n", tempq->url);
+				tempq = tempq->next;
+			}
+			printf("\n");
 			break;
 
 		case 6:
