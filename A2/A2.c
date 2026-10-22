@@ -100,6 +100,8 @@ int main(void) {
 				//enquing the url to the queue
 				enqueue(queue, buffer);
 			}
+			printf("\n");
+
 
 			break;
 
@@ -120,11 +122,17 @@ int main(void) {
 		case 4:
 			printf("You chose to display current page.\n");
 			printf("\n");
+
+			char* currentPage = peek(backStack);
+			printf("Your current page: %s\n", currentPage);
+			printf("\n");
+
 			break;
 
 		case 5:
 			printf("You chose to view the browsing history log.\n");
 			printf("\n");
+
 			break;
 
 		case 6:
@@ -142,6 +150,9 @@ int main(void) {
 	}
 	return 0;
 }
+
+
+//STACK FUNCTIONS
 
 // METHOD : push()
 // DESCRIPTION: 
@@ -232,8 +243,6 @@ char* peek(struct Stack* stack) {
 
 }
 
-
-
 // METHOD : InitializeStack()
 // DESCRIPTION: 
 //      This function allocates memory to initialize a stack.
@@ -266,6 +275,8 @@ bool isEmptyS(struct Stack* stack) {
 }
 
 
+//QUEUE FUNCTIONS
+
 // METHOD : enqueue()
 // DESCRIPTION: 
 //      This function adds a new node to the queue.
@@ -287,7 +298,7 @@ void enqueue(struct Queue* queue, char* newUrl) {
 
 	// Adding the url to the new node
 	strcpy(newUrlNode->url, newUrl);
-
+	newUrlNode->next = NULL;
 	//Setting new node as the first and last node if the queue is empty
 	if (isEmptyQ(queue) == true) {
 		queue->front = newUrlNode;
