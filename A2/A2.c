@@ -73,7 +73,16 @@ int main(void) {
 		printf("Select an operation: \n");
 
 		int choice;
-		scanf("%d", &choice);
+
+		// Ensuring the choice is an integer number
+		if (scanf("%d", &choice) != 1) {
+			printf("Invalid choice. Please enter a number 1-6.\n");
+			printf("\n");
+
+			while (getchar() != '\n');
+
+			continue;
+		}
 
 		switch (choice) {
 
@@ -162,7 +171,13 @@ int main(void) {
 
 			//Peeking at the current page
 			char* currentPage = peekS(backStack);
-			printf("Your current page: %s\n", currentPage);
+
+			if (currentPage == NULL) {
+				printf("You do not have a current page.\n");
+			}
+			else {
+				printf("Your current page: %s\n", currentPage);
+			}
 
 			printf("\n");
 
@@ -175,12 +190,18 @@ int main(void) {
 			//Storing the front node temporarily
 			struct QueueNode* tempq = queue->front;
 
-			//Traversing the queue
-			while (tempq != NULL) {
-				printf("%s\n", tempq->url);
-				tempq = tempq->next;
+			//checking if the history is empty
+			if (tempq == NULL) {
+				printf("You have no browsing history.\n");
 			}
-			printf("\n");
+			else {
+				//Traversing the queue
+				while (tempq != NULL) {
+					printf("%s\n", tempq->url);
+					tempq = tempq->next;
+				}
+				printf("\n");
+			}
 			break;
 
 		case 6:
