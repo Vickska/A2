@@ -263,7 +263,6 @@ char* pop(struct Stack* stack) {
 
 	//Checking if the stack is empty
 	if (isEmptyS(stack) == true) {
-		printf("Stack is empty.");
 		return NULL;
 	}
 
@@ -296,7 +295,6 @@ char* peekS(struct Stack* stack) {
 
 	//Checking if the stack is empty
 	if (isEmptyS(stack) == true) {
-		printf("Stack is empty.");
 		return NULL;
 	}
 
