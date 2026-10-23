@@ -489,13 +489,6 @@ void updateHistory(struct Queue* queue, char* url) {
 		// checking if the current node's url matches the url just accessed
 		if (strcmp(current->url, findNode) == 0) {
 
-			// if the queue is empty, the url is placed at the front/rear
-			if (isEmptyQ(queue) == true) {
-				queue->front = current;
-				queue->rear = current;
-				break;
-			}
-
 			// if the node with the current url is already at the rear, do nothing
 			if (current == queue->rear) {
 				break;
