@@ -48,8 +48,7 @@ char* peekQ(struct Queue* queue);
 bool isEmptyQ(struct Queue* queue);
 struct Queue* InitializeQueue(void);
 
-
-
+void updateHistory(struct Queue* queue, char* url);
 
 
 int main(void) {
@@ -96,6 +95,12 @@ int main(void) {
 				break;
 			}
 			else {
+
+				//checking if there's urls in the forward stack, and clearing them if there are
+				while (!isEmptyS(forwardStack)) {
+					pop(forwardStack);
+				}
+
 				//pushing the url to the top of the stack
 				push(backStack, buffer);
 
@@ -111,24 +116,51 @@ int main(void) {
 			printf("You chose to navigate backward.\n");
 			printf("\n");
 
-			// popping the current url and pushing it to the forward stack
-			char* topUrl = pop(backStack);
-			push(forwardStack, topUrl);
+			// Checking if theres nodes in the backstack and if there's more than one node to traverse
+			if (isEmptyS(backStack) || backStack->top->next == NULL) {
+				printf("You have no visited pages to go back to.\n");
+				printf("\n");
 
-			// moving the current url to the rear of the queue
-			enqueue(queue,peekS(backStack));
+			}
+			else {
+				// popping the current url and pushing it to the forward stack
+				char* topUrl = pop(backStack);
+				push(forwardStack, topUrl);
+
+				// storing the last accessed webpage url to update the web history queue
+				char* lastAccessedWebpage = peekS(backStack);
+
+				// updating the queue
+				updateHistory(queue, lastAccessedWebpage);
+			}
 
 			break;
 
 		case 3:
 			printf("You chose to navigate forward.\n");
 			printf("\n");
+
+			//checking if forwardStack is empty
+			if (!isEmptyS(forwardStack)) {
+				//// popping the current url and pushing it to the back stack
+				char* forwardUrl = pop(forwardStack);
+				push(backStack, forwardUrl);
+
+				// moving the current url to the rear of the queue
+				updateHistory(queue, forwardUrl);
+			}
+			else {
+				printf("You have no pages to go forward to.\n");
+				printf("\n");
+			}
+
 			break;
 
 		case 4:
 			printf("You chose to display current page.\n");
 			printf("\n");
 
+			//Peeking at the current page
 			char* currentPage = peekS(backStack);
 			printf("Your current page: %s\n", currentPage);
 
@@ -140,8 +172,10 @@ int main(void) {
 			printf("You chose to view the browsing history log.\n");
 			printf("\n");
 
+			//Storing the front node temporarily
 			struct QueueNode* tempq = queue->front;
 
+			//Traversing the queue
 			while (tempq != NULL) {
 				printf("%s\n", tempq->url);
 				tempq = tempq->next;
@@ -340,11 +374,11 @@ char* dequeue(struct Queue* queue) {
 	// temporarily storing the front node
 	struct QueueNode* dequeuedNode = queue->front;
 
-	//Storing the url of the node being popped
+	//Storing the url of the node being dequeued
 	static char frontUrl[50];
 	strcpy(frontUrl, dequeuedNode->url);
 
-	//Making the next node the top of the stack.
+	//Making the next node the front of the queue.
 	queue->front = dequeuedNode->next;
 
 	//If the next node is empty, set the rear to null
@@ -413,4 +447,62 @@ bool isEmptyQ(struct Queue* queue) {
 	// Checking if the top of the stack is empty
 	bool isEmpty = queue->front == NULL;
 	return isEmpty;
+}
+
+
+// METHOD : updateHistory()
+// DESCRIPTION: 
+//      This function moves the nodes in the queue to put the most recently accessed web page at the rear
+// PARAMETERS:
+//     struct Queue* queue: the web history queue
+//	   char* newUrl: the url that has just been accessed
+// RETURNS:
+//	   None.
+void updateHistory(struct Queue* queue, char* url) {
+
+	struct QueueNode* current = queue->front;
+	struct QueueNode* prev = NULL;
+	char* findNode = url;
+
+	//moving the current url to the rear of the queue
+	while (current != NULL) {
+
+		// checking if the current node's url matches the url just accessed
+		if (strcmp(current->url, findNode) == 0) {
+
+			// if the queue is empty, the url is placed at the front/rear
+			if (isEmptyQ(queue) == true) {
+				queue->front = current;
+				queue->rear = current;
+				break;
+			}
+
+			// if the node with the current url is already at the rear, do nothing
+			if (current == queue->rear) {
+				break;
+			}
+
+			// if the previous node isnt empty, replace its next node with the node after the current url's node
+			if (prev != NULL) {
+				prev->next = current->next;
+			}
+			// if the current url's node is at the front, then the node after it becomes the front.
+			else {
+				queue->front = current->next;
+			}
+
+			// the current url's node is placed after the current rear node
+			queue->rear->next = current;
+
+			// the current url node is placed at the rear
+			queue->rear = current;
+
+			// the current url node's next is set to null as it is the rear now
+			current->next = NULL;
+			break;
+		}
+		prev = current;
+		current = current->next;
+	}
+
 }
